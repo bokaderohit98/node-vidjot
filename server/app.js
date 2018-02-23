@@ -2,23 +2,27 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const {Idea} = require('./models/Ideas');
+const {
+  Idea
+} = require('./models/Ideas');
 
 const app = express();
 
 mongoose.promise = global.promise;
 
 mongoose.connect('mongodb://localhost/vidjot')
-.then(() => {
-  console.log('Mongodb Connected');
-}).catch((err) => console.log(err));
+  .then(() => {
+    console.log('Mongodb Connected');
+  }).catch((err) => console.log(err));
 
 app.engine('handlebars', exphbs({
   defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 
 const port = 3000;
@@ -34,6 +38,18 @@ app.get('/about', (req, res) => {
   res.render('about');
 });
 
+app.get('/ideas', (req, res) => {
+  Idea.find({})
+    .sort({
+      date: 'descending'
+    })
+    .then((ideas) => {
+      res.render('ideas/index', {
+        ideas,
+      });
+    });
+});
+
 app.get('/ideas/add', (req, res) => {
   res.render('ideas/add');
 });
@@ -41,10 +57,14 @@ app.get('/ideas/add', (req, res) => {
 app.post('/ideas', (req, res) => {
   let errors = [];
   if (!req.body.title) {
-    errors.push({text: 'Please add a title'});
+    errors.push({
+      text: 'Please add a title'
+    });
   }
   if (!req.body.details) {
-    errors.push({text: 'Please add some details'});
+    errors.push({
+      text: 'Please add some details'
+    });
   }
 
   if (errors.length > 0) {
@@ -59,10 +79,10 @@ app.post('/ideas', (req, res) => {
       details: req.body.details,
     };
     new Idea(newUser)
-    .save()
-    .then((idea) => {
-      res.redirect('/ideas');
-    });
+      .save()
+      .then((idea) => {
+        res.redirect('/ideas');
+      });
   }
 });
 
