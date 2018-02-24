@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
+//Authorization middleware
+const {ensureAuthenticated} = require('../helpers/auth');
+
 //Loading Idea Model
 const Idea = require('../models/Idea');
 
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
   Idea.find({})
     .sort({
       date: 'descending'
@@ -16,11 +19,11 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/add', (req, res) => {
+router.get('/add', ensureAuthenticated, (req, res) => {
   res.render('ideas/add');
 });
 
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   Idea.findById(req.params.id)
     .then((idea) => {
       res.render('ideas/edit', {
@@ -29,7 +32,7 @@ router.get('/edit/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', ensureAuthenticated, (req, res) => {
   let errors = [];
   if (!req.body.title) {
     errors.push({
@@ -66,7 +69,7 @@ router.post('/', (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', ensureAuthenticated, (req, res) => {
   Idea.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
       details: req.body.details
@@ -83,7 +86,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', ensureAuthenticated, (req, res) => {
   Idea.findByIdAndRemove(req.params.id)
     .then((idea) => {
       req.flash('success_msg', 'Video idea removed')

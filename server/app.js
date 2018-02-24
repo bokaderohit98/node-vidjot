@@ -8,7 +8,6 @@ const path = require('path');
 const passport = require('passport');
 const flash = require('connect-flash');
 
-
 //Load routes
 const ideas = require('./routes/ideas');
 const users = require('./routes/users');
