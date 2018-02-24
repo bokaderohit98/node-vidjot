@@ -89,11 +89,11 @@ router.put('/:id', ensureAuthenticated, (req, res) => {
     })
     .then((idea) => {
       req.flash('success_msg', 'Video idea updated')
-      res.redirect('/');
+      res.redirect('/ideas');
     })
     .catch((err) => {
       req.flash('error_msg', 'Video idea cannot be updated');
-      res.redirect('/');
+      res.redirect('/ideas');
     });
 });
 
@@ -101,11 +101,11 @@ router.delete('/:id', ensureAuthenticated, (req, res) => {
   Idea.findByIdAndRemove(req.params.id)
     .then((idea) => {
       req.flash('success_msg', 'Video idea removed')
-      res.redirect('/');
+      res.redirect('/ideas');
     })
     .catch((err) => {
       req.flash('error_msg', 'Video idea cannot be removed');
-      res.redirect('/');
+      res.redirect('/ideas');
     });
 });
 
