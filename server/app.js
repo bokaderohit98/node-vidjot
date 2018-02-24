@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const path = require('path');
 const flash = require('connect-flash');
+
 
 //Load routes
 const ideas = require('./routes/ideas');
@@ -12,6 +14,9 @@ const users = require('./routes/users');
 
 //Initializing App
 const app = express();
+
+//Adding static folder
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Setting up mongoose
 mongoose.promise = global.promise;
