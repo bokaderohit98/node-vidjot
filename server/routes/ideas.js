@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 //Authorization middleware
-const {ensureAuthenticated} = require('../helpers/auth');
+const {
+  ensureAuthenticated
+} = require('../helpers/auth');
 
 //Loading Idea Model
 const Idea = require('../models/Idea');
 
 router.get('/', ensureAuthenticated, (req, res) => {
-  Idea.find({})
+  Idea.find({
+      user: req.user.id
+    })
     .sort({
       date: 'descending'
     })
@@ -26,9 +30,14 @@ router.get('/add', ensureAuthenticated, (req, res) => {
 router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   Idea.findById(req.params.id)
     .then((idea) => {
-      res.render('ideas/edit', {
-        idea
-      });
+      if (idea.user != req.user.id) {
+        req.flash('error_msg', 'Unauthorized Access');
+        res.redirect('/ideas');
+      } else {
+        res.render('ideas/edit', {
+          idea
+        });
+      }
     });
 });
 
@@ -55,16 +64,17 @@ router.post('/', ensureAuthenticated, (req, res) => {
     const newUser = {
       title: req.body.title,
       details: req.body.details,
+      user: req.user.id
     };
     new Idea(newUser)
       .save()
       .then((idea) => {
         req.flash('success_msg', 'Video idea added');
-        res.redirect('/');
+        res.redirect('/ideas');
       })
       .catch((err) => {
         req.flash('error_msg', 'Video idea cannot be added');
-        res.redirect('/');
+        res.redirect('/ideas');
       });
   }
 });
@@ -72,7 +82,8 @@ router.post('/', ensureAuthenticated, (req, res) => {
 router.put('/:id', ensureAuthenticated, (req, res) => {
   Idea.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
-      details: req.body.details
+      details: req.body.details,
+      user: req.user.id
     }, {
       new: true
     })
