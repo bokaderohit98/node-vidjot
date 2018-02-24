@@ -16,8 +16,6 @@ const IdeaSchema = new Schema ({
   }
 });
 
-const Idea = mongoose.model('ideas', IdeaSchema);
+const Idea = mongoose.model('idea', IdeaSchema);
 
-module.exports = {
-  Idea,
-};
+module.exports = Idea;

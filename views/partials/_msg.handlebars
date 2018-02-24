@@ -1,12 +1,12 @@
 {{#if success_msg}}
-  <div class="alert alert-success">
-    {{success_msg}}
+  <div class="alert alert-success alert-dismissable">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{success_msg}}
   </div>
 {{/if}}
 
 
 {{#if error_msg}}
-  <div class="alert alert-danger">
-    {{error_msg}}
+  <div class="alert alert-danger alert-dismissable">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{error_msg}}
   </div>
 {{/if}}
