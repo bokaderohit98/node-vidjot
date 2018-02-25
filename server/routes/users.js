@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const nev = require('../config/emailVerification');
 
 router.get('/login', (req, res) => {
   res.render('users/login');
@@ -33,36 +34,34 @@ router.post('/register', (req, res) => {
       email: req.body.email
     });
   } else {
+    //initialize newUser
+    var newUser = new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+    });
 
-    //Check if the email already exist
-    User.findOne({
-      email: req.body.email
-    }).then((user) => {
-      if (user) {
-        //Throw error message if user already exists
-        req.flash('error_msg', 'Email already exists');
-        res.redirect('/users/register');
+    nev.createTempUser(newUser, (err, existingPersistentUser, newTempUser) => {
+
+      if (err) {
+        console.log(err);
+      } else if (existingPersistentUser) {
+        req.flash('error_msg', 'User already exist. Login to continue');
+        res.redirect('/users/login');
+      } else if (newTempUser) {
+        var URL = newTempUser[nev.options.URLFieldName];
+        nev.sendVerificationEmail(newUser.email, URL, (err, info) => {
+          if (err) {
+            console.log(err);
+          } else {
+            req.flash('success_msg', 'Successfully Registered. To login, first confirm your email address within 24 hours');
+            res.redirect('/users/login');
+          }
+        });
       } else {
-        //Create user if email doesnt already exist
-        var newUser = new User({
-          name: req.body.name,
-          email: req.body.email,
-        });
-        bcrypt.genSalt(10, function(err, salt) {
-          bcrypt.hash(req.body.password, salt, (err, hash) => {
-            if (err) throw err;
-            newUser.password = hash;
-            newUser.save()
-              .then((user) => {
-                req.flash('success_msg', 'Successfully registered. Login to continue');
-                res.redirect('/users/login');
-              })
-          });
-        });
+        req.flash('success_msg', 'User is already registered. Please verify account');
+        res.redirect('/users/login');
       }
-    }).catch((err) => {
-      console.log(err);
-      return;
     });
   }
 });
@@ -79,6 +78,25 @@ router.get('/logout', (req, res) => {
   req.logout();
   req.flash('success_msg', 'You have been logged out');
   res.redirect('/users/login');
+});
+
+router.get('/email-verification/:URL', (req, res) => {
+  var url = req.params.URL;
+
+  nev.confirmTempUser(url, (err, user) => {
+    if (user) {
+      nev.sendConfirmationEmail(user.email, (err, info) => {
+        if (err) {
+          console.log(err);
+        } else {
+          req.flash('success_msg', 'Email verified successfully. Now you can log in');
+          res.redirect('/users/login');
+        }
+      });
+    } else {
+      console.log(err);
+    }
+  });
 });
 
 module.exports = router;

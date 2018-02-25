@@ -13,11 +13,7 @@ module.exports = (passport) => {
       User.findOne({
         email
       }).then((user) => {
-        if (!user) {
-          return done(null, false, {
-            message: 'User not found'
-          });
-        } else {
+        if (user) {
           bcrypt.compare(password, user.password).then((result) => {
             if (!result) {
               return done(null, false, {
@@ -27,9 +23,13 @@ module.exports = (passport) => {
               return done(null, user);
             }
           });
+        } else {
+          return done(null, false, {
+            message: 'User not found'
+          })
         }
       });
-    }));
+    }))
 
   passport.serializeUser(function(user, done) {
     done(null, user.id);

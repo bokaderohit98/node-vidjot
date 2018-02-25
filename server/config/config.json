@@ -2,7 +2,8 @@
   "development": {
     "PORT": 3000,
     "MONGODB_URI": "mongodb://localhost:27017/vidjot",
-    "EMAIL": "Email address for sending emails",
-    "PASSWORD": "Password associated with email address"
+    "EMAIL": "bokaderohit1998@gmail.com",
+    "PASSWORD": "9213678754",
+    "HOST": "http://localhost:3000"
   }
 }

@@ -3,6 +3,7 @@
     "PORT": "Port",
     "MONGODB_URI": "Mongo database url",
     "EMAIL": "Email address for sending emails",
-    "PASSWORD": "Password associated with email address"
+    "PASSWORD": "Password associated with email address",
+    "HOST": "http://localhost:<port>",
   }
 }
