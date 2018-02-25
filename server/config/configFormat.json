@@ -1,7 +1,7 @@
 {
   "development": {
-    "PORT": 3000,
-    "MONGODB_URI": "mongodb://localhost:27017/vidjot",
+    "PORT": "Port",
+    "MONGODB_URI": "Mongo database url",
     "EMAIL": "Email address for sending emails",
     "PASSWORD": "Password associated with email address"
   }

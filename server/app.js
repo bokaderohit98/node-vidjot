@@ -15,7 +15,7 @@ const ideas = require('./routes/ideas');
 const users = require('./routes/users');
 
 //Passport Config
-require('../config/passport')(passport);
+require('./config/passport')(passport);
 
 //Initializing App
 const app = express();

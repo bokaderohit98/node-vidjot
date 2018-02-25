@@ -20,6 +20,9 @@ router.get('/', ensureAuthenticated, (req, res) => {
       res.render('ideas/index', {
         ideas,
       });
+    }).catch((err) => {
+      console.log(err);
+      return;
     });
 });
 
@@ -38,6 +41,9 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
           idea
         });
       }
+    }).catch((err) => {
+      console.log(err);
+      return;
     });
 });
 
